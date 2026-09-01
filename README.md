@@ -273,3 +273,4 @@ Then restart the server.
 - **Database:** `postgresql+psycopg://postgres:Brakes66@localhost:5432/pokebase`
 - **JWT Secret:** `pokebase-secret-key-change-in-production-2024`
 - **JWT Expiry:** 24 hours
+# PokeBase
