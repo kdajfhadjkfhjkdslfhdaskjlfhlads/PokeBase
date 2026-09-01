@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card - PokeBase</title>
+    <meta name="description" content="Add a new Pokemon card to your collection. Auto-detect card details by entering the collector number.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .collector-input-area {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 24px;
+            transition: border-color 0.3s;
+        }
+        .collector-input-area.found {
+            border-color: var(--success);
+        }
+        .collector-input-area.error {
+            border-color: var(--primary);
+        }
+        .collector-input-area h2 {
+            margin-bottom: 6px;
+        }
+        .collector-input-area p {
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .collector-row {
+            display: flex;
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .collector-row input {
+            flex: 1;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .collector-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .collector-row .btn {
+            padding: 14px 24px;
+        }
+        .status-msg {
+            margin-top: 14px;
+            font-size: 0.95rem;
+            min-height: 24px;
+        }
+        .status-msg.loading { color: var(--accent); }
+        .status-msg.success { color: var(--success); }
+        .status-msg.fail { color: var(--primary); }
+        .found-card-preview {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 20px;
+            display: none;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .found-card-preview.show {
+            display: flex;
+        }
+        .found-card-preview .results-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .found-card-preview .results-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .found-card-preview .results-scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        .found-card-preview img {
+            width: 180px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .found-card-preview .details {
+            flex: 1;
+        }
+        .found-card-preview .details h3 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+        .found-card-preview .details .set-info {
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .found-card-preview .details .meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .found-card-preview .use-btn {
+            margin-top: 12px;
+        }
+        .manual-toggle {
+            margin-top: 16px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .manual-toggle:hover { color: var(--text); }
+        .divider {
+            text-align: center;
+            color: var(--text-dim);
+            margin: 20px 0;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--border);
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/dashboard.html" class="navbar-brand">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="container form-page" role="main">
+        <h1>Add New Card</h1>
+
+        <!-- Collector Number Auto-Detect -->
+        <div class="collector-input-area" id="collector-area">
+            <h2>Enter the card number</h2>
+            <p>Type the collector number from the card like <strong>178/132</strong> or just <strong>178</strong></p>
+            <div class="collector-row">
+                <input type="text" id="collector-number" placeholder="e.g. 178/132" onkeydown="if(event.key==='Enter')lookupCard()">
+                <button class="btn btn-primary" onclick="lookupCard()">Detect</button>
+            </div>
+            <div class="status-msg" id="lookup-status"></div>
+            <div class="found-card-preview" id="found-preview">
+                <img id="found-image" src="" alt="">
+                <div class="details">
+                    <h3 id="found-name"></h3>
+                    <div class="set-info" id="found-set"></div>
+                    <div class="meta-badges" id="found-meta"></div>
+                    <button class="btn btn-primary btn-small use-btn" onclick="useDetectedCard()">Use This Card</button>
+                </div>
+            </div>
+            <div class="manual-toggle" onclick="resetCollectorInput()">Or enter number manually</div>
+        </div>
+
+        <!-- Manual Form -->
+        <div class="form-card" id="manual-form" style="display:none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pokedex_number">Pokedex Number</label>
+                    <input type="number" id="pokedex_number" placeholder="e.g. 25" min="1" max="1025">
+                </div>
+                <div class="form-group">
+                    <label for="name">Pokemon Name *</label>
+                    <input type="text" id="name" placeholder="e.g. Pikachu">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="collector_number">Collector Number</label>
+                <input type="text" id="collector_number" placeholder="e.g. 178/132">
+            </div>
+
+            <div class="form-group">
+                <label for="image_url">Image URL</label>
+                <input type="url" id="image_url" placeholder="https://..." oninput="previewImage()">
+                <img id="image-preview" class="image-preview" alt="Preview">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="set_name">Set Name</label>
+                    <input type="text" id="set_name" placeholder="e.g. Base Set">
+                </div>
+                <div class="form-group">
+                    <label for="rarity">Rarity</label>
+                    <select id="rarity">
+                        <option value="">Select...</option>
+                        <option value="Common">Common</option>
+                        <option value="Uncommon">Uncommon</option>
+                        <option value="Rare">Rare</option>
+                        <option value="Ultra Rare">Ultra Rare</option>
+                        <option value="Secret Rare">Secret Rare</option>
+                        <option value="Legendary">Legendary</option>
+                        <option value="Mythical">Mythical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="condition">Condition</label>
+                    <select id="condition">
+                        <option value="">Select...</option>
+                        <option value="Mint">Mint</option>
+                        <option value="Near Mint">Near Mint</option>
+                        <option value="Lightly Played">Lightly Played</option>
+                        <option value="Moderately Played">Moderately Played</option>
+                        <option value="Heavily Played">Heavily Played</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Ungraded">Ungraded</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="grade">Grade</label>
+                    <input type="text" id="grade" placeholder="e.g. PSA 10">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" placeholder="e.g. 1999" min="1996" max="2030">
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" value="1" min="1" max="9999">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="market_value">Market Value ($)</label>
+                <input type="number" id="market_value" placeholder="0.00" step="0.01" min="0">
+            </div>
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="is_holo">
+                <label for="is_holo">Holographic</label>
+            </div>
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="is_foil">
+                <label for="is_foil">Foil</label>
+            </div>
+
+            <div class="form-group">
+                <label for="date_acquired">Date Acquired</label>
+                <input type="date" id="date_acquired">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" placeholder="Any notes about this card..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:10px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="addCard()">Add Card</button>
+                <a href="/dashboard.html" class="btn btn-secondary" style="flex:1; text-decoration:none; text-align:center;">Cancel</a>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+        else updateNav();
+
+        let detectedCard = null;
+
+        function toggleManual() {
+            const form = document.getElementById('manual-form');
+            const area = document.getElementById('collector-area');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                area.style.display = 'none';
+            } else {
+                form.style.display = 'none';
+                area.style.display = 'block';
+            }
+        }
+
+        function resetCollectorInput() {
+            const input = document.getElementById('collector-number');
+            const status = document.getElementById('lookup-status');
+            const preview = document.getElementById('found-preview');
+            const area = document.getElementById('collector-area');
+
+            input.value = '';
+            status.textContent = '';
+            status.className = 'status-msg';
+            preview.classList.remove('show');
+            area.classList.remove('found', 'error');
+            input.focus();
+        }
+
+        function parseCollectorNumber(input) {
+            input = input.trim();
+            const match = input.match(/^(\d+)(?:\s*\/\s*(\d+))?$/);
+            if (!match) return null;
+            return { number: match[1], total: match[2] || null };
+        }
+
+        async function fetchWithRetry(url, retries = 3, delay = 2000, onRetry) {
+            let lastError;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url);
+                    if (res.status === 500 || res.status === 429) {
+                        lastError = new Error(`HTTP ${res.status}`);
+                        if (i < retries - 1) {
+                            if (onRetry) onRetry(i + 2, retries);
+                            await new Promise(r => setTimeout(r, delay * (i + 1)));
+                            continue;
+                        }
+                        throw lastError;
+                    }
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return await res.json();
+                } catch (e) {
+                    lastError = e;
+                    if (i < retries - 1) {
+                        if (onRetry) onRetry(i + 2, retries);
+                        await new Promise(r => setTimeout(r, delay * (i + 1)));
+                    } else {
+                        throw lastError;
+                    }
+                }
+            }
+        }
+
+        async function lookupCard() {
+            const input = document.getElementById('collector-number').value;
+            const status = document.getElementById('lookup-status');
+            const preview = document.getElementById('found-preview');
+            const area = document.getElementById('collector-area');
+
+            area.classList.remove('found', 'error');
+            preview.classList.remove('show');
+
+            if (!input.trim()) {
+                status.className = 'status-msg fail';
+                status.textContent = 'Enter a card number first';
+                return;
+            }
+
+            const parsed = parseCollectorNumber(input);
+            if (!parsed) {
+                status.className = 'status-msg fail';
+                status.textContent = 'Invalid format. Use something like 178/132 or just 178';
+                return;
+            }
+
+            status.className = 'status-msg loading';
+            status.textContent = 'Searching Pokemon TCG database... (this may take a few seconds)';
+
+            try {
+                let query = `number:${parsed.number}`;
+
+                const data = await fetchWithRetry(
+                    `https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(query)}&pageSize=50`,
+                    3, 2500,
+                    (attempt, total) => {
+                        status.className = 'status-msg loading';
+                        status.textContent = `API busy, retrying... (attempt ${attempt}/${total})`;
+                    }
+                );
+
+                if (!data.data || data.data.length === 0) {
+                    status.className = 'status-msg fail';
+                    status.textContent = 'No cards found. Try a different number or fill in manually.';
+                    area.classList.add('error');
+                    return;
+                }
+
+                if (data.data.length === 1) {
+                    pickCard(data.data[0]);
+                    return;
+                }
+
+                status.className = 'status-msg success';
+                status.textContent = `Found ${data.data.length} cards with #${parsed.number}. Pick your set:`;
+
+                let html = '';
+                data.data.forEach((card, i) => {
+                    const img = card.images?.small || '';
+                    const setName = card.set?.name || 'Unknown Set';
+                    const pokemon = card.name || 'Unknown';
+                    const printed = card.set?.printedTotal || '?';
+                    const total = card.set?.total || '?';
+                    html += `
+                        <div style="display:flex;gap:12px;align-items:center;padding:10px;background:var(--bg-card);border-radius:8px;margin-top:8px;cursor:pointer;border:1px solid var(--border);" onclick="pickCardByIndex(${i})" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                            <img src="${img}" style="width:50px;height:70px;object-fit:contain;border-radius:4px;" onerror="this.style.display='none'">
+                            <div style="flex:1;">
+                                <strong>${pokemon}</strong><br>
+                                <span style="color:var(--text-dim);font-size:0.85rem;">${setName} (#${card.number}/${printed})</span><br>
+                                <span style="color:var(--text-dim);font-size:0.8rem;">${card.rarity || ''}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                preview.innerHTML = `<div class="results-scroll" style="width:100%">${html}</div>`;
+                preview.classList.add('show');
+                window._searchResults = data.data;
+
+            } catch (e) {
+                status.className = 'status-msg fail';
+                status.textContent = 'API is busy (rate limited). Wait 30 seconds and try again, or fill in manually.';
+                area.classList.add('error');
+            }
+        }
+
+        function pickCardByIndex(index) {
+            const card = window._searchResults[index];
+            detectedCard = card;
+
+            const name = card.name || 'Unknown';
+            const set = card.set?.name || 'Unknown Set';
+            const number = card.number || '';
+
+            if (!confirm(`Add ${name} (${set} #${number}) to your collection?`)) return;
+
+            addDetectedCard(card);
+        }
+
+        async function addDetectedCard(card) {
+            const status = document.getElementById('lookup-status');
+            const area = document.getElementById('collector-area');
+            status.className = 'status-msg loading';
+            status.textContent = 'Adding card...';
+            area.classList.add('found');
+
+            let marketPrice = 0;
+            if (card.tcgplayer?.prices) {
+                const prices = card.tcgplayer.prices;
+                if (prices.holofoil?.market) marketPrice = prices.holofoil.market;
+                else if (prices.reverseHolofoil?.market) marketPrice = prices.reverseHolofoil.market;
+                else if (prices.normal?.market) marketPrice = prices.normal.market;
+                else if (prices.holofoil?.mid) marketPrice = prices.holofoil.mid;
+                else if (prices.normal?.mid) marketPrice = prices.normal.mid;
+            }
+
+            if (marketPrice === 0 && card.cardmarket?.prices) {
+                const cm = card.cardmarket.prices;
+                if (cm.trendPrice) marketPrice = cm.trendPrice;
+                else if (cm.averageSellPrice) marketPrice = cm.averageSellPrice;
+            }
+
+            if (marketPrice === 0) {
+                try {
+                    const marketRes = await fetch(`https://api.pokemontcg.io/v2/cards/${card.id}`);
+                    if (marketRes.ok) {
+                        const marketData = await marketRes.json();
+                        if (marketData.data?.tcgplayer?.prices) {
+                            const prices = marketData.data.tcgplayer.prices;
+                            if (prices.holofoil?.market) marketPrice = prices.holofoil.market;
+                            else if (prices.reverseHolofoil?.market) marketPrice = prices.reverseHolofoil.market;
+                            else if (prices.normal?.market) marketPrice = prices.normal.market;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            const rarity = card.rarity || '';
+            const rarityMap = {
+                'Common': 'Common', 'Uncommon': 'Uncommon', 'Rare': 'Rare',
+                'Rare Holo': 'Rare', 'Ultra Rare': 'Ultra Rare', 'Double Rare': 'Ultra Rare',
+                'Secret Rare': 'Secret Rare', 'Amazing Rare': 'Rare',
+                'LEGEND': 'Legendary', 'Promo': 'Rare', 'Special Illustration Rare': 'Ultra Rare',
+            };
+
+            const payload = {
+                pokedex_number: card.nationalPokedexNumbers?.[0] || 0,
+                name: card.name || '',
+                collector_number: card.number || '',
+                image_url: card.images?.large || card.images?.small || '',
+                quantity: 1,
+                rarity: rarityMap[rarity] || rarity || '',
+                set_name: card.set?.name || '',
+                condition: '',
+                year: card.set?.releaseDate ? parseInt(card.set.releaseDate.substring(0, 4)) : null,
+                market_value: marketPrice,
+                notes: '',
+                date_acquired: '',
+                grade: '',
+                is_foil: false,
+                is_holo: rarity.toLowerCase().includes('holo'),
+            };
+
+            try {
+                const res = await apiFetch('/cards', { method: 'POST', body: payload });
+                if (res && res.ok) {
+                    const priceMsg = marketPrice > 0 ? ` ($${marketPrice.toFixed(2)})` : '';
+                    showToast(`${card.name} added!${priceMsg}`);
+                    setTimeout(() => window.location.href = '/dashboard.html', 800);
+                } else {
+                    const data = await res.json();
+                    status.className = 'status-msg fail';
+                    status.textContent = data.detail || 'Failed to add card';
+                }
+            } catch (e) {
+                status.className = 'status-msg fail';
+                status.textContent = 'Network error';
+            }
+        }
+    </script>
+</body>
+</html>

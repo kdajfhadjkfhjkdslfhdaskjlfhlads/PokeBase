@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - PokeBase</title>
+    <meta name="description" content="Message other Pokemon card collectors on PokeBase. Discuss collections, trade cards, and connect with the community.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="/" class="navbar-brand" aria-label="PokeBase Home">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="container" role="main">
+        <div class="chat-layout">
+            <aside class="chat-sidebar" aria-label="Conversations">
+                <h2>Messages</h2>
+                <div class="conversation-list" id="conversation-list"></div>
+            </aside>
+            <section class="chat-main" aria-label="Chat">
+                <div class="chat-header" id="chat-header">
+                    <h3 id="chat-with-name">Select a conversation</h3>
+                </div>
+                <div class="chat-messages" id="chat-messages" style="display:none;" role="log" aria-live="polite"></div>
+                <div class="chat-placeholder" id="chat-placeholder">
+                    <p>Select a conversation or start a new one from a user's profile</p>
+                </div>
+                <form class="chat-input-area" id="chat-input-area" style="display:none;" onsubmit="event.preventDefault(); sendMessage();">
+                    <input type="text" id="chat-input" placeholder="Type a message..." aria-label="Type a message">
+                    <button type="submit" class="btn btn-primary btn-small">Send</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+        else {
+            updateNav();
+            loadConversations();
+            initChat();
+        }
+    </script>
+</body>
+</html>

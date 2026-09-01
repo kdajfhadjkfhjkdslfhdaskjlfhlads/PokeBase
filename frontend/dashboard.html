@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Collection - PokeBase</title>
+    <meta name="description" content="Manage your Pokemon card collection. Add, edit, and track your cards with auto-detected market prices.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="/dashboard.html" class="navbar-brand" aria-label="PokeBase Home">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="container" role="main">
+        <header class="dashboard-header">
+            <h1 id="greeting">My Collection</h1>
+            <p id="subtitle">Loading...</p>
+            <div class="dashboard-controls">
+                <label class="toggle-label">
+                    <input type="checkbox" id="public-toggle">
+                    <span class="toggle-switch"></span>
+                    Make Collection Public
+                </label>
+                <a href="/admin.html" class="btn btn-secondary btn-small" id="admin-link" style="display:none;">Admin Panel</a>
+            </div>
+        </header>
+
+        <section aria-label="Collection statistics">
+            <div class="stats-row" id="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">Total Cards</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-unique">0</div>
+                    <div class="stat-label">Unique Pokemon</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-value">$0</div>
+                    <div class="stat-label">Collection Value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-holo">0</div>
+                    <div class="stat-label">Holo / Foil</div>
+                </div>
+            </div>
+        </section>
+
+        <section aria-label="Search and filter cards">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="search" placeholder="Search by name or #" oninput="filterCards()" aria-label="Search cards">
+                    <select id="filter-holo" onchange="filterCards()" aria-label="Filter by type">
+                        <option value="">All Types</option>
+                        <option value="holo">Holo Only</option>
+                        <option value="foil">Foil Only</option>
+                        <option value="normal">Normal Only</option>
+                    </select>
+                    <select id="filter-rarity" onchange="filterCards()" aria-label="Filter by rarity">
+                        <option value="">All Rarities</option>
+                        <option value="Common">Common</option>
+                        <option value="Uncommon">Uncommon</option>
+                        <option value="Rare">Rare</option>
+                        <option value="Ultra Rare">Ultra Rare</option>
+                        <option value="Secret Rare">Secret Rare</option>
+                        <option value="Legendary">Legendary</option>
+                        <option value="Mythical">Mythical</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-secondary btn-small" onclick="shareCollection()">Share Collection</button>
+                    <a href="/add.html" class="btn btn-primary btn-small" style="text-decoration:none;">+ Add Card</a>
+                </div>
+            </div>
+        </section>
+
+        <section aria-label="Your cards">
+            <div class="card-grid" id="card-grid"></div>
+            <div class="empty-state" id="empty-state" style="display:none;">
+                <h2>No cards yet!</h2>
+                <p>Start building your collection by adding your first Pokemon card.</p>
+                <a href="/add.html" class="btn btn-primary">+ Add Your First Card</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+        else {
+            updateNav();
+            loadDashboard();
+        }
+    </script>
+</body>
+</html>

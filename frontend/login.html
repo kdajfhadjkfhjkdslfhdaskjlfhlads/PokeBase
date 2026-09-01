@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PokeBase Pokemon Card Tracker</title>
+    <meta name="description" content="Log in to your PokeBase account to manage your Pokemon card collection, track values, and connect with other collectors.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://pokebase.online/login.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Login - PokeBase">
+    <meta property="og:description" content="Log in to manage your Pokemon card collection.">
+    <meta property="og:url" content="https://pokebase.online/login.html">
+    <meta property="og:site_name" content="PokeBase">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Login - PokeBase">
+    <meta name="twitter:description" content="Log in to manage your Pokemon card collection.">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="/" class="navbar-brand" aria-label="PokeBase Home">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="auth-page" role="main">
+        <div class="auth-card">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Log in to your collection</p>
+
+            <div class="error-msg" id="error-msg" role="alert"></div>
+
+            <form onsubmit="event.preventDefault(); login();" novalidate>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Your username" autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Your password" autocomplete="current-password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+
+            <p class="auth-footer">
+                Don't have an account? <a href="/signup.html">Sign up</a>
+            </p>
+        </div>
+    </main>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        updateNav();
+        if (getToken()) window.location.href = '/dashboard.html';
+    </script>
+</body>
+</html>

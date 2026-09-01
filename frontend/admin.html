@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - PokeBase</title>
+    <meta name="description" content="PokeBase admin panel. Manage users, review reports, and view platform statistics.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="/" class="navbar-brand" aria-label="PokeBase Home">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="container form-page" role="main">
+        <h1>Admin Panel</h1>
+
+        <section aria-label="Platform statistics">
+            <div class="admin-stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-total-users">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-total-cards">0</div>
+                    <div class="stat-label">Total Cards</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-public">0</div>
+                    <div class="stat-label">Public Collections</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-banned">0</div>
+                    <div class="stat-label">Banned Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-reports">0</div>
+                    <div class="stat-label">Pending Reports</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-feedback-count">0</div>
+                    <div class="stat-label">Feedback</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-messages">0</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="admin-tabs" aria-label="Admin sections">
+            <button class="btn btn-small admin-tab-btn active" data-tab="users" onclick="switchAdminTab('users')">Users</button>
+            <button class="btn btn-small admin-tab-btn" data-tab="reports" onclick="switchAdminTab('reports')">Reports</button>
+            <button class="btn btn-small admin-tab-btn" data-tab="feedback" onclick="switchAdminTab('feedback')">Feedback</button>
+        </nav>
+
+        <section class="admin-panel-section" id="admin-users" style="display:block;" aria-label="User management">
+            <div id="admin-users-list"></div>
+        </section>
+
+        <section class="admin-panel-section" id="admin-reports" style="display:none;" aria-label="Reports">
+            <div id="admin-reports-list"></div>
+        </section>
+
+        <section class="admin-panel-section" id="admin-feedback" style="display:none;" aria-label="Feedback">
+            <div id="admin-feedback-list"></div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+        else {
+            updateNav();
+            loadAdminPanel();
+        }
+    </script>
+</body>
+</html>

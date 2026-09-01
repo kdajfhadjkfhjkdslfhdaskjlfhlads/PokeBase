@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /signup.html
+Allow: /login.html
+Allow: /profile.html
+Allow: /view.html
+Disallow: /dashboard.html
+Disallow: /add.html
+Disallow: /edit.html
+Disallow: /chat.html
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://pokebase.online/sitemap.xml

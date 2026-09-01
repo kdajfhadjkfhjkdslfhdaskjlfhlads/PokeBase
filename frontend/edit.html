@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Card - PokeBase</title>
+    <meta name="description" content="Edit your Pokemon card details. Update condition, grade, notes, and other card information.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/dashboard.html" class="navbar-brand">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="container form-page" role="main">
+        <h1>Edit Card</h1>
+
+        <div class="form-card">
+            <input type="hidden" id="card-id">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pokedex_number">Pokedex Number *</label>
+                    <input type="number" id="pokedex_number" placeholder="e.g. 25" min="1" max="1025">
+                </div>
+                <div class="form-group">
+                    <label for="name">Pokemon Name *</label>
+                    <input type="text" id="name" placeholder="e.g. Pikachu">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="collector_number">Collector Number</label>
+                <input type="text" id="collector_number" placeholder="e.g. 178/132">
+            </div>
+
+            <div class="form-group">
+                <label for="image_url">Image URL</label>
+                <input type="url" id="image_url" placeholder="https://..." oninput="previewImage()">
+                <img id="image-preview" class="image-preview" alt="Preview">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="set_name">Set Name</label>
+                    <input type="text" id="set_name" placeholder="e.g. Base Set">
+                </div>
+                <div class="form-group">
+                    <label for="rarity">Rarity</label>
+                    <select id="rarity">
+                        <option value="">Select...</option>
+                        <option value="Common">Common</option>
+                        <option value="Uncommon">Uncommon</option>
+                        <option value="Rare">Rare</option>
+                        <option value="Ultra Rare">Ultra Rare</option>
+                        <option value="Secret Rare">Secret Rare</option>
+                        <option value="Legendary">Legendary</option>
+                        <option value="Mythical">Mythical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="condition">Condition</label>
+                    <select id="condition">
+                        <option value="">Select...</option>
+                        <option value="Mint">Mint</option>
+                        <option value="Near Mint">Near Mint</option>
+                        <option value="Lightly Played">Lightly Played</option>
+                        <option value="Moderately Played">Moderately Played</option>
+                        <option value="Heavily Played">Heavily Played</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Ungraded">Ungraded</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="grade">Grade</label>
+                    <input type="text" id="grade" placeholder="e.g. PSA 10">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" placeholder="e.g. 1999" min="1996" max="2030">
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" value="1" min="1" max="9999">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="market_value">Market Value ($)</label>
+                <input type="number" id="market_value" placeholder="0.00" step="0.01" min="0">
+            </div>
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="is_holo">
+                <label for="is_holo">Holographic</label>
+            </div>
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="is_foil">
+                <label for="is_foil">Foil</label>
+            </div>
+
+            <div class="form-group">
+                <label for="date_acquired">Date Acquired</label>
+                <input type="date" id="date_acquired">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" placeholder="Any notes about this card..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:10px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="updateCard()">Save Changes</button>
+                <a href="/dashboard.html" class="btn btn-secondary" style="flex:1; text-decoration:none; text-align:center;">Cancel</a>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+        else {
+            updateNav();
+            loadCardForEdit();
+        }
+    </script>
+</body>
+</html>

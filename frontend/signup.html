@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Free Pokemon Card Collection Tracker | PokeBase</title>
+    <meta name="description" content="Create your free PokeBase account to start tracking your Pokemon card collection. Auto-detect cards, track market values, and share with collectors.">
+    <meta name="keywords" content="pokemon card tracker sign up, pokemon collection account, pokebase register, free pokemon card database">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://pokebase.online/signup.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Sign Up - PokeBase Pokemon Card Tracker">
+    <meta property="og:description" content="Create your free PokeBase account to start tracking your Pokemon card collection.">
+    <meta property="og:url" content="https://pokebase.online/signup.html">
+    <meta property="og:site_name" content="PokeBase">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Sign Up - PokeBase">
+    <meta name="twitter:description" content="Create your free account to start tracking your Pokemon card collection.">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="/" class="navbar-brand" aria-label="PokeBase Home">Poke<span>Base</span></a>
+            <div class="navbar-links" id="nav-links"></div>
+        </div>
+    </nav>
+
+    <main class="auth-page" role="main">
+        <div class="auth-card">
+            <h1>Poke<span>Base</span></h1>
+            <p class="subtitle">Track and share your Pokemon card collection</p>
+
+            <div class="error-msg" id="error-msg" role="alert"></div>
+
+            <form onsubmit="event.preventDefault(); signup();" novalidate>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Choose a username" autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="your@email.com" autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Min 6 characters" autocomplete="new-password" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+
+            <p class="auth-footer">
+                Already have an account? <a href="/login.html">Log in</a>
+            </p>
+        </div>
+    </main>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        updateNav();
+        if (getToken()) window.location.href = '/dashboard.html';
+    </script>
+</body>
+</html>
