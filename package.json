@@ -1,0 +1,24 @@
+{
+  "name": "pokebase",
+  "version": "1.0.0",
+  "description": "A Pokemon card collection tracker with social features. Users can sign up, add cards by entering the collector number (auto-detects name, image, set, rarity, and market price via the PokéTcg API), manage their collection, share it publicly, rate and like other collections, chat with other collectors, and more.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kdajfhadjkfhjkdslfhdaskjlfhlads/PokeBase.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kdajfhadjkfhjkdslfhdaskjlfhlads/PokeBase/issues"
+  },
+  "homepage": "https://github.com/kdajfhadjkfhjkdslfhdaskjlfhlads/PokeBase#readme",
+  "dependencies": {
+    "@neon/config": "^1.1.0",
+    "@neon/env": "^1.1.6",
+    "neon": "^4.13.1"
+  }
+}
