@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User
 
-SECRET_KEY = "pokebase-secret-key-change-in-production-2024"
+import os
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "pokebase-dev-secret-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 

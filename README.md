@@ -127,11 +127,11 @@ PokeBase/
 
 ### 1. Prerequisites
 - Python 3.14+
-- PostgreSQL running on localhost:5432 with user `postgres` and password `Brakes66`
+- PostgreSQL running locally or a hosted instance (Supabase, Railway, etc.)
 
 ### 2. Create the database
 ```bash
-PGPASSWORD=Brakes66 psql -U postgres -h localhost -c "CREATE DATABASE pokebase;"
+psql -U postgres -h localhost -c "CREATE DATABASE pokebase;"
 ```
 
 ### 3. Set up Python virtual environment
@@ -270,7 +270,7 @@ Then restart the server.
 ## Environment / Config
 
 - **Server:** `0.0.0.0:8000`
-- **Database:** `postgresql+psycopg://postgres:Brakes66@localhost:5432/pokebase`
-- **JWT Secret:** `pokebase-secret-key-change-in-production-2024`
+- **Database:** Set `DATABASE_URL` env var to your PostgreSQL connection string
+- **JWT Secret:** Set `JWT_SECRET_KEY` env var (defaults to dev-only placeholder)
 - **JWT Expiry:** 24 hours
 # PokeBase

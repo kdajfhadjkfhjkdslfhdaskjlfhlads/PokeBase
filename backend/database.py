@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:Brakes66N4v4@db.erlsiwaipzbscncjuzfr.supabase.co:5432/postgres")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
