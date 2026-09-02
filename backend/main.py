@@ -750,68 +750,68 @@ def get_admin_stats(
 
 # ==================== FRONTEND ====================
 
-app.mount("/css", StaticFiles(directory="../frontend/css"), name="css")
-app.mount("/js", StaticFiles(directory="../frontend/js"), name="js")
+app.mount("/css", StaticFiles(directory="../css"), name="css")
+app.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
 @app.get("/robots.txt")
 def serve_robots():
-    return FileResponse("../frontend/robots.txt", media_type="text/plain")
+    return FileResponse("../robots.txt", media_type="text/plain")
 
 
 @app.get("/sitemap.xml")
 def serve_sitemap():
-    return FileResponse("../frontend/sitemap.xml", media_type="application/xml")
+    return FileResponse("../sitemap.xml", media_type="application/xml")
 
 
 @app.get("/")
 def serve_index():
-    return FileResponse("../frontend/index.html")
+    return FileResponse("../index.html")
 
 
 @app.get("/login.html")
 def serve_login():
-    return FileResponse("../frontend/login.html")
+    return FileResponse("../login.html")
 
 
 @app.get("/signup.html")
 def serve_signup():
-    return FileResponse("../frontend/signup.html")
+    return FileResponse("../signup.html")
 
 
 @app.get("/dashboard.html")
 def serve_dashboard():
-    return FileResponse("../frontend/dashboard.html")
+    return FileResponse("../dashboard.html")
 
 
 @app.get("/add.html")
 def serve_add():
-    return FileResponse("../frontend/add.html")
+    return FileResponse("../add.html")
 
 
 @app.get("/edit.html")
 def serve_edit():
-    return FileResponse("../frontend/edit.html")
+    return FileResponse("../edit.html")
 
 
 @app.get("/view.html")
 def serve_view():
-    return FileResponse("../frontend/view.html")
+    return FileResponse("../view.html")
 
 
 @app.get("/profile.html")
 def serve_profile():
-    return FileResponse("../frontend/profile.html")
+    return FileResponse("../profile.html")
 
 
 @app.get("/chat.html")
 def serve_chat():
-    return FileResponse("../frontend/chat.html")
+    return FileResponse("../chat.html")
 
 
 @app.get("/admin.html")
 def serve_admin():
-    return FileResponse("../frontend/admin.html")
+    return FileResponse("../admin.html")
 
 
 if __name__ == "__main__":
